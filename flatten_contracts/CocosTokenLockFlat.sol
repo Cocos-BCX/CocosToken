@@ -111,7 +111,7 @@ library SafeMath {
 
 // File: openzeppelin-solidity/contracts/ownership/Ownable.sol
 
-pragma solidity ^0.5.0;
+//pragma solidity ^0.5.0;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -189,7 +189,7 @@ contract Ownable {
 
 // File: openzeppelin-solidity/contracts/token/ERC20/IERC20.sol
 
-pragma solidity ^0.5.0;
+//pragma solidity ^0.5.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP. Does not include
@@ -268,7 +268,7 @@ interface IERC20 {
 
 // File: openzeppelin-solidity/contracts/token/ERC20/ERC20.sol
 
-pragma solidity ^0.5.0;
+//pragma solidity ^0.5.0;
 
 
 
@@ -436,13 +436,13 @@ contract ERC20 is IERC20 {
      *
      * - `to` cannot be the zero address.
      */
-    function _mint(address account, uint256 amount) internal {
-        require(account != address(0), "ERC20: mint to the zero address");
+    // function _mint(address account, uint256 amount) internal {
+    //     require(account != address(0), "ERC20: mint to the zero address");
 
-        _totalSupply = _totalSupply.add(amount);
-        _balances[account] = _balances[account].add(amount);
-        emit Transfer(address(0), account, amount);
-    }
+    //     _totalSupply = _totalSupply.add(amount);
+    //     _balances[account] = _balances[account].add(amount);
+    //     emit Transfer(address(0), account, amount);
+    // }
 
      /**
      * @dev Destoys `amount` tokens from `account`, reducing the
@@ -455,13 +455,13 @@ contract ERC20 is IERC20 {
      * - `account` cannot be the zero address.
      * - `account` must have at least `amount` tokens.
      */
-    function _burn(address account, uint256 value) internal {
-        require(account != address(0), "ERC20: burn from the zero address");
+    // function _burn(address account, uint256 value) internal {
+    //     require(account != address(0), "ERC20: burn from the zero address");
 
-        _totalSupply = _totalSupply.sub(value);
-        _balances[account] = _balances[account].sub(value);
-        emit Transfer(account, address(0), value);
-    }
+    //     _totalSupply = _totalSupply.sub(value);
+    //     _balances[account] = _balances[account].sub(value);
+    //     emit Transfer(account, address(0), value);
+    // }
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the `owner`s tokens.
@@ -490,15 +490,15 @@ contract ERC20 is IERC20 {
      *
      * See `_burn` and `_approve`.
      */
-    function _burnFrom(address account, uint256 amount) internal {
-        _burn(account, amount);
-        _approve(account, msg.sender, _allowances[account][msg.sender].sub(amount));
-    }
+    // function _burnFrom(address account, uint256 amount) internal {
+    //     _burn(account, amount);
+    //     _approve(account, msg.sender, _allowances[account][msg.sender].sub(amount));
+    // }
 }
 
 // File: contracts/CocosTokenLock.sol
 
-pragma solidity ^0.5.0;
+//pragma solidity ^0.5.0;
 
 
 
@@ -543,16 +543,16 @@ contract CocosTokenLock is Ownable {
     ];
 
 
-    //uint[TOTAL_LOCK_TYPES] public startTimes = [0, 120 days, 30 days, 0, 0, 90 days, 0];  // from tge(token generator event)
-    uint[TOTAL_LOCK_TYPES] public startTimes = [0,  10 seconds, 1 minutes, 0 minutes, 0, 10 seconds, 0];  // for test
-    //uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [180 days, 365 days, 90 days, 90 days, 90 days, 30 days, 90 days];
-    uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [10 seconds, 10 seconds,  3 minutes, 5 seconds,
-        3 minutes, 2 seconds, 5 seconds];  // for test
+    uint[TOTAL_LOCK_TYPES] public startTimes = [0, 120 days, 30 days, 0, 0, 90 days, 0];  // from tge(token generator event)
+    //uint[TOTAL_LOCK_TYPES] public startTimes = [0,  10 seconds, 1 minutes, 0 minutes, 0, 10 seconds, 0];  // for test
+    uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [180 days, 365 days, 90 days, 90 days, 90 days, 30 days, 90 days];
+    //uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [10 seconds, 10 seconds,  3 minutes, 5 seconds,
+    //    3 minutes, 2 seconds, 5 seconds];  // for test
 
-    //uint public constant ADIVISORS_SECOND_AHEAD_TIME = 30 days;
-    uint public constant ADIVISORS_SECOND_AHEAD_TIME = 2 minutes;  // for test
-    //uint public constant PARTNER_INCENTIE_SECOND_DELAY_TIME = 30 days;
-    uint public constant PARTNER_INCENTIE_SECOND_DELAY_TIME = 2 minutes; // for test
+    uint public constant ADIVISORS_SECOND_AHEAD_TIME = 30 days;
+    //uint public constant ADIVISORS_SECOND_AHEAD_TIME = 2 minutes;  // for test
+    uint public constant PARTNER_INCENTIE_SECOND_DELAY_TIME = 30 days;
+    //uint public constant PARTNER_INCENTIE_SECOND_DELAY_TIME = 2 minutes; // for test
 
     // seven token address
     address[TOTAL_LOCK_TYPES] public tokenAddresses = [
