@@ -111,7 +111,7 @@ library SafeMath {
 
 // File: openzeppelin-solidity/contracts/ownership/Ownable.sol
 
-    
+pragma solidity ^0.5.0;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -189,7 +189,7 @@ contract Ownable {
 
 // File: openzeppelin-solidity/contracts/token/ERC20/IERC20.sol
 
-    
+pragma solidity ^0.5.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP. Does not include
@@ -268,7 +268,7 @@ interface IERC20 {
 
 // File: openzeppelin-solidity/contracts/token/ERC20/ERC20.sol
 
-    
+pragma solidity ^0.5.0;
 
 
 
@@ -427,6 +427,41 @@ contract ERC20 is IERC20 {
         emit Transfer(sender, recipient, amount);
     }
 
+    /** @dev Creates `amount` tokens and assigns them to `account`, increasing
+     * the total supply.
+     *
+     * Emits a `Transfer` event with `from` set to the zero address.
+     *
+     * Requirements
+     *
+     * - `to` cannot be the zero address.
+     */
+    function _mint(address account, uint256 amount) internal {
+        require(account != address(0), "ERC20: mint to the zero address");
+
+        _totalSupply = _totalSupply.add(amount);
+        _balances[account] = _balances[account].add(amount);
+        emit Transfer(address(0), account, amount);
+    }
+
+     /**
+     * @dev Destoys `amount` tokens from `account`, reducing the
+     * total supply.
+     *
+     * Emits a `Transfer` event with `to` set to the zero address.
+     *
+     * Requirements
+     *
+     * - `account` cannot be the zero address.
+     * - `account` must have at least `amount` tokens.
+     */
+    function _burn(address account, uint256 value) internal {
+        require(account != address(0), "ERC20: burn from the zero address");
+
+        _totalSupply = _totalSupply.sub(value);
+        _balances[account] = _balances[account].sub(value);
+        emit Transfer(account, address(0), value);
+    }
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the `owner`s tokens.
@@ -448,11 +483,22 @@ contract ERC20 is IERC20 {
         _allowances[owner][spender] = value;
         emit Approval(owner, spender, value);
     }
+
+    /**
+     * @dev Destoys `amount` tokens from `account`.`amount` is then deducted
+     * from the caller's allowance.
+     *
+     * See `_burn` and `_approve`.
+     */
+    function _burnFrom(address account, uint256 amount) internal {
+        _burn(account, amount);
+        _approve(account, msg.sender, _allowances[account][msg.sender].sub(amount));
+    }
 }
 
 // File: contracts/CocosTokenLock.sol
 
-    
+pragma solidity ^0.5.0;
 
 
 
@@ -466,24 +512,49 @@ contract CocosTokenLock is Ownable {
 
     ERC20 public token;
 
-    // locak plan 
-    uint256 public totalPrivateToken = 20000000000 * (10 ** 18);
+    // 0 Contributor
+    // 1 Team
+    // 2 Adivisors
+    // 3 UserIncentive
+    // 4 PartnerIncentive
+    // 5 DPOSReward
+    // 6 TokenTreasury
+    uint8 public constant CONTRIBUTOR = 0;
+    uint8 public constant TEAM = 1;
+    uint8 public constant ADIVISORS = 2;
+    uint8 public constant USER_INCENTIVE = 3;
+    uint8 public constant PARTNER_INCENTIE = 4;
+    uint8 public constant DPOS_REWARD = 5;
+    uint8 public constant TOKEN_TREASURY = 6;
+    uint8 public constant TOTAL_LOCK_TYPE = 7;
 
-    // total: 20 billion
-    // 10%, 7.5%, 7.5%, 7.5%, 7.5%, 7.5%, 7.5%
-    uint[] public lockPerK = [100,75,75,75,75,75,75];
-    uint256  public totalLockToken = 0;
-    uint public  totalLockStep = 0;
-    uint public lockIntervalTime = 30 days;
+    uint256 public constant DECIMAL_VALUE = (10 ** 18);
 
 
-    address public privateLockAddress;
+    uint[] public lockPerK = [224, 170, 40, 76, 100, 300, 90];
+    //uint[] public startTimes = [0, 120 days, 0, 0, 0, 90 days, 0];  // from tge(token generator event)
+    uint[] public startTimes = [0, 5 minutes, 0, 0, 0, 6 minutes, 0];  // for test
+    //uint[] public locakIntervalTimes = [180 days, 365 days, 180 days, 90 days, 90 days, 30 days, 90 days];
+    uint[] public locakIntervalTimes = [2 minutes, 3 minutes, 4 minutes, 5 minutes, 6 minutes, 7 minutes, 8 minutes]; // for tet
+    // serven token address
+    address[] public tokenAddresses = [
+        0x00b9070E042fc812047B00aC41c0D3C631Ba06b1,
+        0x00b9070E042fc812047B00aC41c0D3C631Ba06b1,
+        0x00b9070E042fc812047B00aC41c0D3C631Ba06b1,
+        0x00b9070E042fc812047B00aC41c0D3C631Ba06b1,
+        0x00b9070E042fc812047B00aC41c0D3C631Ba06b1,
+        0x00b9070E042fc812047B00aC41c0D3C631Ba06b1,
+        0x00b9070E042fc812047B00aC41c0D3C631Ba06b1
+    ];
 
-    uint public lockedAt = 0; 
-    uint public lastUnlockTime = 0;
-    uint public currentLockStep = 0;
+    uint256[TOTAL_LOCK_TYPE][] public lockTokenMatrix = new uint256[TOTAL_LOCK_TYPE][](0);
 
-    event UnlockToken(uint currentStep, uint steps, uint256 tokens, uint lockTime);
+    uint[] public lastUnlockTimes= [0, 0, 0, 0, 0, 0, 0];
+    uint[] public currentLockSteps = [0, 0, 0, 0, 0, 0, 0];
+
+    uint public lockedAt = 0;
+
+    event UnlockToken(uint8 tokenType, uint currentStep, uint steps, uint256 tokens, uint lockTime, address addr);
 
     //Has not been locked yet
     modifier notLocked {
@@ -508,15 +579,10 @@ contract CocosTokenLock is Ownable {
         validAddress(_privateLockAddress){
 
         token = ERC20(_cocosToken);
-        privateLockAddress = _privateLockAddress;
 
-        uint totalPerK = 0;
-        totalLockStep = lockPerK.length;
-        for(uint i = 0; i < totalLockStep; i++){
-            totalPerK = totalPerK + lockPerK[i];
-        }
+        lockTokenMatrix[CONTRIBUTOR] = new uint256[3];
 
-        totalLockToken = totalPrivateToken*totalPerK/1000;
+        // add check logic
     }
 
     //In the case locking failed, then allow the owner to reclaim the tokens on the contract.
@@ -525,50 +591,53 @@ contract CocosTokenLock is Ownable {
         notLocked
         onlyOwner{
         // Transfer all tokens on this contract back to the owner
-        require(token.transfer(owner(), token.balanceOf(address(this))));
+        require(token.transfer(owner(), token.balanceOf(address(this))), "transfoer error");
     }
 
     function lock() public
         notLocked
         onlyOwner{
-        require(token.balanceOf(address(this)) == totalLockToken);
+        //require(token.balanceOf(address(this)) == totalLockToken, );
+        // // add check logic
         lockedAt = block.timestamp;
-        currentLockStep = 0;
     }
 
     /**
     * @notice Transfers tokens held by timelock to private.
     */
-    function unlock() public
+    function unlock(uint8 tokenType) public
         locked
         onlyOwner{
 
-        require(currentLockStep < totalLockStep, "unlock finish");
+        require(0 <= tokenType && tokenType < TOTAL_LOCK_TYPE, "tokenType must in [0,6]");
+        require(currentLockSteps[tokenType] < lockTokenMatrix[tokenType].length, "unlock finish");
+
         uint currentTime = block.timestamp;
 
         uint dt;
-        if(lastUnlockTime == 0){
+        if(lastUnlockTimes[tokenType] == 0){
             dt = currentTime - lockedAt;
         }else{
-            dt = currentTime - lastUnlockTime;
+            dt = currentTime - lastUnlockTimes[tokenType];
         }
 
-        uint steps = dt/lockIntervalTime;
+        uint steps = dt/locakIntervalTimes[tokenType];
         require(steps > 0, "can't unlock");
 
         uint256 unlockToken = 0;
-        uint oldStep = currentLockStep;
-        for(uint i = currentLockStep; i < (currentLockStep + steps) && i < totalLockStep; i++ ){
-            unlockToken = unlockToken + (lockPerK[i] * totalPrivateToken / 1000);
+        uint oldStep = currentLockSteps[tokenType];
+        uint totalLockStep = lockTokenMatrix[tokenType].length;
+        for(uint i = currentLockSteps[tokenType]; i < (currentLockSteps[tokenType] + steps) && i < totalLockStep; i++ ){
+            unlockToken = unlockToken + lockTokenMatrix[tokenType][i];
         }
-        lastUnlockTime = currentTime;
-        currentLockStep = currentLockStep + steps;
+        lastUnlockTimes[tokenType] = currentTime;
+        currentLockSteps[tokenType] = currentLockSteps[tokenType] + steps;
 
         uint256 amount = token.balanceOf(address(this));
         require(amount >= unlockToken, 'not enough token');
 
-        emit UnlockToken(oldStep, steps, unlockToken, lastUnlockTime);
+        emit UnlockToken(tokenType, oldStep, steps, unlockToken, lastUnlockTimes[tokenType], tokenAddresses[tokenType]);
 
-        token.transfer(privateLockAddress, unlockToken);
+        token.transfer(tokenAddresses[tokenType], unlockToken);
     }
 }

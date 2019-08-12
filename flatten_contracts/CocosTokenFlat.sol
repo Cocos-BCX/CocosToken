@@ -1,7 +1,7 @@
 
 // File: openzeppelin-solidity/contracts/token/ERC20/IERC20.sol
+
 pragma solidity ^0.5.0;
-   
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP. Does not include
@@ -79,6 +79,8 @@ interface IERC20 {
 }
 
 // File: openzeppelin-solidity/contracts/math/SafeMath.sol
+
+pragma solidity ^0.5.0;
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -188,6 +190,7 @@ library SafeMath {
 
 // File: openzeppelin-solidity/contracts/token/ERC20/ERC20.sol
 
+pragma solidity ^0.5.0;
 
 
 
@@ -363,6 +366,25 @@ contract ERC20 is IERC20 {
         emit Transfer(address(0), account, amount);
     }
 
+     /**
+     * @dev Destoys `amount` tokens from `account`, reducing the
+     * total supply.
+     *
+     * Emits a `Transfer` event with `to` set to the zero address.
+     *
+     * Requirements
+     *
+     * - `account` cannot be the zero address.
+     * - `account` must have at least `amount` tokens.
+     */
+    function _burn(address account, uint256 value) internal {
+        require(account != address(0), "ERC20: burn from the zero address");
+
+        _totalSupply = _totalSupply.sub(value);
+        _balances[account] = _balances[account].sub(value);
+        emit Transfer(account, address(0), value);
+    }
+
     /**
      * @dev Sets `amount` as the allowance of `spender` over the `owner`s tokens.
      *
@@ -383,9 +405,22 @@ contract ERC20 is IERC20 {
         _allowances[owner][spender] = value;
         emit Approval(owner, spender, value);
     }
+
+    /**
+     * @dev Destoys `amount` tokens from `account`.`amount` is then deducted
+     * from the caller's allowance.
+     *
+     * See `_burn` and `_approve`.
+     */
+    function _burnFrom(address account, uint256 amount) internal {
+        _burn(account, amount);
+        _approve(account, msg.sender, _allowances[account][msg.sender].sub(amount));
+    }
 }
 
 // File: openzeppelin-solidity/contracts/token/ERC20/ERC20Detailed.sol
+
+pragma solidity ^0.5.0;
 
 
 /**
@@ -441,6 +476,7 @@ contract ERC20Detailed is IERC20 {
 
 // File: openzeppelin-solidity/contracts/access/Roles.sol
 
+pragma solidity ^0.5.0;
 
 /**
  * @title Roles
@@ -479,7 +515,7 @@ library Roles {
 
 // File: openzeppelin-solidity/contracts/access/roles/PauserRole.sol
 
-   
+pragma solidity ^0.5.0;
 
 
 contract PauserRole {
@@ -524,7 +560,7 @@ contract PauserRole {
 
 // File: openzeppelin-solidity/contracts/lifecycle/Pausable.sol
 
-   
+pragma solidity ^0.5.0;
 
 
 /**
@@ -599,7 +635,7 @@ contract Pausable is PauserRole {
 
 // File: openzeppelin-solidity/contracts/ownership/Ownable.sol
 
-   
+pragma solidity ^0.5.0;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -677,7 +713,7 @@ contract Ownable {
 
 // File: contracts/CocosToken.sol
 
-   
+pragma solidity ^0.5.0;
 
 
 

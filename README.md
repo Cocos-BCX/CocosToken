@@ -1,1 +1,2 @@
-ERC20 token for Cocos-BCX
+# ERC20 token for Cocos-BCX
+
