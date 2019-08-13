@@ -1,10 +1,10 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.5.0;
 
 
 
 contract AirDropContract{
 
-    function AirDropContract() public {
+    constructor () public {
     }
 
     modifier validAddress( address addr ) {
@@ -13,7 +13,7 @@ contract AirDropContract{
         _;
     }
     
-    function transfer(address contract_address,address[] tos,uint[] vs)
+    function transfer(address contract_address, address[] memory tos,  uint[] memory vs)
         public 
         validAddress(contract_address)
         returns (bool){
@@ -21,9 +21,10 @@ contract AirDropContract{
         require(tos.length > 0);
         require(vs.length > 0);
         require(tos.length == vs.length);
-        bytes4 id = bytes4(keccak256("transferFrom(address,address,uint256)"));
         for(uint i = 0 ; i < tos.length; i++){
-            contract_address.call(id, msg.sender, tos[i], vs[i]);
+            (bool success, bytes memory data) = contract_address.call(abi.encodeWithSignature("transferFrom(address,address,uint256)",
+                 msg.sender, tos[i], vs[i]));
+            require(success == true, "transferFrom Error ");
         }
         return true;
     }

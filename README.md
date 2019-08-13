@@ -17,4 +17,9 @@
 
 7. 以此调用 CocosTokenLock 的 unlock 接口传入不同的类型，解锁token
 
-8. 设置 CocosToken 为 unpuased
+9. 部署AirdropContract用于批量空投
+
+10. 设置AirdropContract的地址为白名单，否则批量转账会失败 
+
+11. 设置 CocosToken 为 unpuased
+   

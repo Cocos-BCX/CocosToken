@@ -16,8 +16,11 @@
     "lite-server": "^2.3.0"
   },
   "dependencies": {
+    "bignumber": "^1.1.0",
+    "ethereumjs-tx": "^2.1.0",
     "openzeppelin-solidity": "^2.3.0",
     "remix-ide": "^0.8.4",
-    "truffle-flattener": "^1.4.0"
+    "truffle-flattener": "^1.4.0",
+    "web3": "^1.2.1"
   }
 }

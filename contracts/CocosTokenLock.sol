@@ -44,7 +44,7 @@ contract CocosTokenLock is Ownable {
     ];
 
 
-    //uint[TOTAL_LOCK_TYPES] public startTimes = [0, 120 days, 30 days, 0, 0, 90 days, 0];  // from tge(token generator event)
+    //uint[TOTAL_LOCK_TYPES] public startTimes = [0, 365 days, 30 days, 0, 0, 90 days, 0];  // from tge(token generator event)
     uint[TOTAL_LOCK_TYPES] public startTimes = [0,  10 seconds, 1 minutes, 0 minutes, 0, 10 seconds, 0];  // for test
     //uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [180 days, 365 days, 90 days, 90 days, 90 days, 30 days, 90 days];
     uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [10 seconds, 10 seconds,  3 minutes, 5 seconds,
