@@ -209,7 +209,7 @@ contract CocosTokenLock is Ownable {
 
         uint currentTime = block.timestamp;
 
-        uint steps;
+        uint steps = 0;
         bool isFirst = false;
         if(lastUnlockTimes[tokenType] == 0){  // first time
             uint interval = currentTime - lockedAt;
