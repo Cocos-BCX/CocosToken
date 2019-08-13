@@ -1,6 +1,5 @@
 pragma solidity ^0.5.0;
 
-import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
 import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
 import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 
@@ -10,8 +9,6 @@ import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
  * @author reedhong
  */
 contract CocosTokenLock is Ownable {
-    using SafeMath for uint;
-
     ERC20 public token;
 
     // 0 Contributor
@@ -44,16 +41,16 @@ contract CocosTokenLock is Ownable {
     ];
 
 
-    //uint[TOTAL_LOCK_TYPES] public startTimes = [0, 365 days, 30 days, 0, 0, 90 days, 0];  // from tge(token generator event)
-    uint[TOTAL_LOCK_TYPES] public startTimes = [0,  10 seconds, 1 minutes, 0 minutes, 0, 10 seconds, 0];  // for test
-    //uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [180 days, 365 days, 90 days, 90 days, 90 days, 30 days, 90 days];
-    uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [10 seconds, 10 seconds,  3 minutes, 5 seconds,
-        3 minutes, 2 seconds, 5 seconds];  // for test
+    uint[TOTAL_LOCK_TYPES] public startTimes = [0, 365 days, 30 days, 0, 0, 90 days, 0];  // from tge(token generator event)
+    //uint[TOTAL_LOCK_TYPES] public startTimes = [0,  10 seconds, 1 minutes, 0 minutes, 0, 10 seconds, 0];  // for test
+    uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [180 days, 365 days, 90 days, 90 days, 90 days, 30 days, 90 days];
+    //uint[TOTAL_LOCK_TYPES] public lockIntervalTimes = [10 seconds, 10 seconds,  3 seconds, 5 seconds,
+    //    3 seconds, 2 seconds, 5 seconds];  // for test
 
-    //uint public constant ADIVISORS_SECOND_AHEAD_TIME = 30 days;
-    uint public constant ADIVISORS_SECOND_AHEAD_TIME = 2 minutes;  // for test
-    //uint public constant PARTNER_INCENTIE_SECOND_DELAY_TIME = 30 days;
-    uint public constant PARTNER_INCENTIE_SECOND_DELAY_TIME = 2 minutes; // for test
+    uint public constant ADIVISORS_SECOND_AHEAD_TIME = 30 days;
+    //uint public constant ADIVISORS_SECOND_AHEAD_TIME = 2 minutes;  // for test
+    uint public constant PARTNER_INCENTIE_SECOND_DELAY_TIME = 30 days;
+    //uint public constant PARTNER_INCENTIE_SECOND_DELAY_TIME = 2 minutes; // for test
 
     // seven token address
     address[TOTAL_LOCK_TYPES] public tokenAddresses = [
@@ -75,6 +72,8 @@ contract CocosTokenLock is Ownable {
 
     event UnlockToken(uint8 tokenType, uint currentStep, uint steps, uint256 tokens, uint lockTime, address addr);
     event CheckTokenDistribution(uint tokenType, uint256 distribution);
+    event RecoverFailedLock(uint256 token);
+    event SetAddress(uint8 tokenType, address addr);
 
     //Has not been locked yet
     modifier notLocked {
@@ -159,6 +158,7 @@ contract CocosTokenLock is Ownable {
         validAddress(addr)
         validTokenType(tokenType) {
             tokenAddresses[tokenType] = addr;
+            emit SetAddress(tokenType, addr);
         }
 
 
@@ -168,7 +168,9 @@ contract CocosTokenLock is Ownable {
         notLocked
         onlyOwner{
         // Transfer all tokens on this contract back to the owner
-        require(token.transfer(owner(), token.balanceOf(address(this))), "transfer error");
+        uint256 balance = token.balanceOf(address(this));
+        require(token.transfer(owner(), balance), "transfer error");
+        emit RecoverFailedLock(balance);
     }
 
     function lock() public
@@ -218,6 +220,7 @@ contract CocosTokenLock is Ownable {
                 isFirst = true;
             }
         }else{
+            require(lastUnlockTimes[tokenType] <= currentTime, "subtraction overflow");
             uint dt = currentTime - lastUnlockTimes[tokenType];
             steps = dt/lockIntervalTimes[tokenType];
         }
@@ -230,15 +233,15 @@ contract CocosTokenLock is Ownable {
         for(uint i = currentLockSteps[tokenType]; i < (currentLockSteps[tokenType] + steps) && i < totalLockStep; i++ ){
             unlockToken = unlockToken + lockTokenMatrix[tokenType][i];
         }
-        lastUnlockTimes[tokenType] = currentTime;
+        lastUnlockTimes[tokenType] = lastUnlockTimes[tokenType] + steps * lockIntervalTimes[tokenType];
  
         // first time is different
         if(isFirst){
+            lastUnlockTimes[tokenType] = lockedAt + startTimes[tokenType];
+
             if( tokenType == ADIVISORS){
-                // speed one month
                 lastUnlockTimes[tokenType] = lastUnlockTimes[tokenType] - ADIVISORS_SECOND_AHEAD_TIME;
             }else if(tokenType == PARTNER_INCENTIE ) {
-                // slow one month
                 lastUnlockTimes[tokenType] = lastUnlockTimes[tokenType] + PARTNER_INCENTIE_SECOND_DELAY_TIME;
             }
         }

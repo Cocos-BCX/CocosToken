@@ -4,8 +4,5 @@ build.log
 package-lock.json
 node_modules/*
 tools/config.js
-tools/whitelist.txt
-tools/whitelist.txt
-tools/reclaim.txt
-tools/airdrop_address.txt
-tools/airdrop_value.txt
+tools/*.txt
+tools/*.json
