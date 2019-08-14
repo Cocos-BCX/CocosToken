@@ -128,29 +128,6 @@ contract CocosTokenLock is Ownable {
             83333332 * DV,
             83333348 * DV
         ];
-
-        lockTokenMatrix[USER_INCENTIVE] = new uint256[](41);
-        for(uint256 i = 0; i < 40; i++){
-            lockTokenMatrix[USER_INCENTIVE][i] = 190000000 * DV;
-        }
-        lockTokenMatrix[USER_INCENTIVE][40] = 3547830 * DV; //totalSupply * lockPerK[USER_INCENTIVE] - 190000000 * DV * 40;
-
-        lockTokenMatrix[PARTNER_INCENTIE] = new uint256[](21);
-        lockTokenMatrix[PARTNER_INCENTIE][0] = 2000000000 * DV;
-        for(uint256 i = 1; i < 21; i++){
-            lockTokenMatrix[PARTNER_INCENTIE][i] = 400000000 * DV;
-        }
-
-        lockTokenMatrix[DPOS_REWARD] = new uint256[](120);
-        for(uint256 i = 0; i < 120; i++){
-            lockTokenMatrix[DPOS_REWARD][i] = 250000000 * DV;
-        }
-
-        lockTokenMatrix[TOKEN_TREASURY] = new uint256[](21);
-        lockTokenMatrix[TOKEN_TREASURY][0] = 1500000000 * DV;
-        for(uint256 i = 1; i < 21; i++){
-            lockTokenMatrix[TOKEN_TREASURY][i] = 375000000 * DV;
-        }
     }
 
     function setAddress(uint8 tokenType, address addr) public
@@ -178,6 +155,29 @@ contract CocosTokenLock is Ownable {
         onlyOwner{
         uint256 totalSupply = token.totalSupply();
         require(token.balanceOf(address(this)) == totalSupply, "can't enough token");
+
+        lockTokenMatrix[USER_INCENTIVE] = new uint256[](41);
+        for(uint256 i = 0; i < 40; i++){
+            lockTokenMatrix[USER_INCENTIVE][i] = 190000000 * DV;
+        }
+        lockTokenMatrix[USER_INCENTIVE][40] = 3547830 * DV; //totalSupply * lockPerK[USER_INCENTIVE] - 190000000 * DV * 40;
+
+        lockTokenMatrix[PARTNER_INCENTIE] = new uint256[](21);
+        lockTokenMatrix[PARTNER_INCENTIE][0] = 2000000000 * DV;
+        for(uint256 i = 1; i < 21; i++){
+            lockTokenMatrix[PARTNER_INCENTIE][i] = 400000000 * DV;
+        }
+
+        lockTokenMatrix[DPOS_REWARD] = new uint256[](120);
+        for(uint256 i = 0; i < 120; i++){
+            lockTokenMatrix[DPOS_REWARD][i] = 250000000 * DV;
+        }
+
+        lockTokenMatrix[TOKEN_TREASURY] = new uint256[](21);
+        lockTokenMatrix[TOKEN_TREASURY][0] = 1500000000 * DV;
+        for(uint256 i = 1; i < 21; i++){
+            lockTokenMatrix[TOKEN_TREASURY][i] = 375000000 * DV;
+        }
 
         // check lock percentage
         uint tokenCount = 0;
