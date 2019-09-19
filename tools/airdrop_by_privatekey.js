@@ -10,22 +10,28 @@ if (typeof web3 !== 'undefined') {
     web3 = new Web3(web3.currentProvider);
 } else {
     //infura provider
-    web3 = new Web3(new Web3.providers.HttpProvider(config.http_provider));
+    web3 = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/a490c3214d3c47f5aa8024ec5d887a6f"));
    //web3.setProvider('wss://mainnet.infura.io/_ws');
 }
 
 console.log(web3.version)
 
 let myContract = new web3.eth.Contract(AirDropABI, config.airdrop_contract_address);
+// let data = myContract.methods.transfer(config.erc20_contract_address,["0x033d815f4fb30b2459a396e004c5a7ecfe30ec39"],
+//     ["666000000000000000000"]).encodeABI();
 let data = myContract.methods.transfer(config.erc20_contract_address, Address, Value).encodeABI();
 
 console.log(data);
 
 
+var gasPrice = 30*1000000000;
+var gasLimit = 3000000;
+var nonce = 60;
+
 var rawTransaction = {
     "from": config.from_account,
-    "gasPrice": web3.utils.toHex(config.gas_price),
-    "gasLimit": web3.utils.toHex(config.gas_limit),
+    "gasPrice": web3.utils.toHex(gasPrice),
+    "gasLimit": web3.utils.toHex(gasLimit),
     "to": config.airdrop_contract_address,
     "value": "0x0",
     //"nonce": web3.utils.toHex(nonce),

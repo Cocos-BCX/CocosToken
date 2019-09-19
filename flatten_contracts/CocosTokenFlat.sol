@@ -80,7 +80,7 @@ interface IERC20 {
 
 // File: openzeppelin-solidity/contracts/math/SafeMath.sol
 
-// pragma solidity ^0.5.0; ^0.5.0;
+pragma solidity ^0.5.0;
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -190,7 +190,7 @@ library SafeMath {
 
 // File: openzeppelin-solidity/contracts/token/ERC20/ERC20.sol
 
-// pragma solidity ^0.5.0; ^0.5.0;
+pragma solidity ^0.5.0;
 
 
 
@@ -420,7 +420,7 @@ contract ERC20 is IERC20 {
 
 // File: openzeppelin-solidity/contracts/token/ERC20/ERC20Detailed.sol
 
-// pragma solidity ^0.5.0; ^0.5.0;
+pragma solidity ^0.5.0;
 
 
 /**
@@ -476,7 +476,7 @@ contract ERC20Detailed is IERC20 {
 
 // File: openzeppelin-solidity/contracts/access/Roles.sol
 
-// pragma solidity ^0.5.0; ^0.5.0;
+pragma solidity ^0.5.0;
 
 /**
  * @title Roles
@@ -515,7 +515,7 @@ library Roles {
 
 // File: openzeppelin-solidity/contracts/access/roles/PauserRole.sol
 
-// pragma solidity ^0.5.0; ^0.5.0;
+pragma solidity ^0.5.0;
 
 
 contract PauserRole {
@@ -560,7 +560,7 @@ contract PauserRole {
 
 // File: openzeppelin-solidity/contracts/lifecycle/Pausable.sol
 
-// pragma solidity ^0.5.0; ^0.5.0;
+pragma solidity ^0.5.0;
 
 
 /**
@@ -635,7 +635,7 @@ contract Pausable is PauserRole {
 
 // File: openzeppelin-solidity/contracts/ownership/Ownable.sol
 
-// pragma solidity ^0.5.0; ^0.5.0;
+pragma solidity ^0.5.0;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -713,7 +713,7 @@ contract Ownable {
 
 // File: contracts/CocosToken.sol
 
-// pragma solidity ^0.5.0; ^0.5.0;
+pragma solidity ^0.5.0;
 
 
 

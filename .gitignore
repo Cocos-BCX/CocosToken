@@ -3,6 +3,3 @@ build/
 build.log
 package-lock.json
 node_modules/*
-tools/config.js
-tools/*.txt
-tools/*.json

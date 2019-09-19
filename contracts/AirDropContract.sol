@@ -19,7 +19,7 @@ contract AirDropContract{
         returns (bool){
 
         require(tos.length > 0);
-        require(vs.length > 0);
+        require(vs.length > 0); 
         require(tos.length == vs.length);
         for(uint i = 0 ; i < tos.length; i++){
             (bool success, bytes memory data) = contract_address.call(abi.encodeWithSignature("transferFrom(address,address,uint256)",
