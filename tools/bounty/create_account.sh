@@ -1,9 +1,0 @@
-node bounty_handle.js bounty提现记录表_2019-08-21134109.xls 3120 _40account.txt _40value.txt
-node bounty_handle.js bounty提现记录表_2019-08-21134109.xls 3200 _41account.txt _41value.txt
-node bounty_handle.js bounty提现记录表_2019-08-21134109.xls 3280 _42account.txt _42value.txt
-node bounty_handle.js bounty提现记录表_2019-08-21134109.xls 3360 _43account.txt _43value.txt
-node bounty_handle.js bounty提现记录表_2019-08-21134109.xls 3440 _44account.txt _44value.txt
-node bounty_handle.js bounty提现记录表_2019-08-21134109.xls 3520 _45account.txt _45value.txt
-node bounty_handle.js bounty提现记录表_2019-08-21134109.xls 3600 _46account.txt _46value.txt
-node bounty_handle.js bounty提现记录表_2019-08-21134109.xls 3680 _47account.txt _47value.txt
-node bounty_handle.js bounty提现记录表_2019-08-21134109.xls 3760 _48account.txt _48value.txt
